@@ -26,18 +26,6 @@ We follow a modular, strictly-typed structure to ensure scalability and ease of 
 
 ---
 
-## 🔬 Mathematical Foundation
-
-### Optimization (Gradient Descent)
-We optimize our cost functions $J(\theta)$ by moving in the direction of steepest descent:
-$$\theta := \theta - \alpha \nabla_{\theta} J(\theta)$$
-
-### Evaluation Metrics
-We implement metrics that matter. For classification, we prioritize the **F1-Score** to balance Precision and Recall in imbalanced datasets:
-$$F_1 = 2 \cdot \frac{\text{precision} \cdot \text{recall}}{\text{precision} + \text{recall}}$$
-
----
-
 ## 🚀 Easy-to-Use API
 Designed to be intuitive for those familiar with the standard ML ecosystem.
 
@@ -52,3 +40,4 @@ y_pred = np.array([0, 1, 0, 0])
 # Evaluation
 score = accuracy_score(y_true, y_pred)
 print(f"Model Accuracy: {score * 100}%")
+
