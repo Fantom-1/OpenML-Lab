@@ -12,6 +12,8 @@ def precision_score(y_true, y_pred):
     fp = np.sum((y_true == 0) & (y_pred == 1))
     return tp / (tp + fp) if tp + fp > 0 else 0
 
+
+
 def recall_score(y_true, y_pred):
     """TP / (TP + FN) -> Fraction of positives correctly identified"""
     y_true, y_pred = np.asarray(y_true), np.asarray(y_pred)
