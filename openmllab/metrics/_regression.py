@@ -11,7 +11,6 @@ def mean_squared_error(y_true, y_pred):
 def root_mean_squared_error(y_true, y_pred):
     return np.sqrt(mean_squared_error(y_true, y_pred))
 
-
 def r2_score(y_true, y_pred):
     y_true, y_pred = np.asarray(y_true), np.asarray(y_pred)
     numerator = np.sum((y_true - y_pred) ** 2)
