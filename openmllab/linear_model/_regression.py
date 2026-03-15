@@ -53,3 +53,23 @@ class SGDRegressor(BaseEstimator):
     def predict(self, X):
         X = np.asarray(X)
         return np.dot(X, self.weights) + self.bias
+    
+
+class RidgeRegression(BaseEstimator):   
+    def __init__(self, alpha=1.0):
+        self.alpha = alpha
+        self.theta = None
+
+    def fit(self, X, y):
+        X, y = np.asarray(X), np.asarray(y)
+        X_b = np.c_[np.ones((X.shape[0], 1)), X]
+        n_features = X_b.shape[1]
+        
+        I = np.eye(n_features)
+        I[0, 0] = 0  
+        self.theta = np.linalg.pinv(X_b.T @ X_b + self.alpha * I) @ X_b.T @ y
+
+    def predict(self, X):
+        X = np.asarray(X)
+        X_b = np.c_[np.ones((X.shape[0], 1)), X]
+        return X_b @ self.theta

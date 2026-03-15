@@ -1,9 +1,9 @@
 import numpy as np
 from openmllab.linear_model import LinearRegression, SGDRegressor
 from openmllab.preprocessing import StandardScaler
-from openmllab.metrics import mean_squared_error, r2_score # Note: We need R2 score!
+from openmllab.metrics import mean_squared_error, r2_score 
 
-# 1. Generate Synthetic Data
+
 X = np.array([[1], [2], [3], [4], [5]])
 y = np.array([1.2, 1.9, 3.0, 4.1, 5.2])
 
