@@ -1,20 +1,36 @@
 # 📉 Linear Models Module
 
-This module contains implementations of linear mapping algorithms, where the relationship between input $X$ and target $y$ is modeled as a linear combination.
+The `linear_model` module implements fundamental mapping algorithms that serve as the bedrock of machine learning. We focus on Ordinary Least Squares (OLS) and Regularized variations to manage the **Bias-Variance Tradeoff**.
 
 ## 1. Ordinary Least Squares (OLS)
-The objective of OLS is to find the vector $\hat{\theta}$ that minimizes the Sum of Squared Residuals (SSR):
-$$J(\theta) = \sum_{i=1}^{n} (y_i - X_i\theta)^2$$
+The objective is to minimize the Residual Sum of Squares (RSS):
+$$J(\theta) = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$
 
-### The Normal Equation
-Instead of iterative optimization, we solve for the global minimum analytically. The derivation follows setting the gradient $\nabla_{\theta} J(\theta) = 0$:
+### Solvers:
+* **Normal Equation:** An analytical solution for global minima.
+    $$\hat{\theta} = (X^T X)^{-1} X^T y$$
+* **Stochastic Gradient Descent (SGD):** An iterative optimizer for large-scale datasets.
+    $$\theta := \theta - \alpha \nabla_{\theta} J(\theta)$$
 
-$$\hat{\theta} = (X^T X)^{-1} X^T y$$
+---
 
-**Implementation Details:**
-* **The Bias Trick:** We augment $X$ with a column of ones to incorporate the intercept $c$ into the weight vector $\theta$.
-* **Numerical Stability:** We utilize the **Moore-Penrose Pseudo-inverse** via SVD to handle rank-deficient (singular) matrices, ensuring the library does not crash on collinear features.
+## 2. Regularization (The Armor of the Model)
+When features are highly correlated (**Multicollinearity**) or the model is over-complex, we add a penalty term $\alpha R(w)$ to the loss function.
 
-### Complexity Analysis
-* **Time Complexity:** $O(n^2 \cdot m + n^3)$ where $n$ is features and $m$ is samples.
-* **Space Complexity:** $O(n^2)$ to store the covariance matrix.
+### A. Ridge Regression (L2 Regularization)
+Ridge adds a penalty equal to the square of the magnitude of coefficients.
+$$J(w) = \text{MSE} + \alpha \sum_{j=1}^{m} w_j^2$$
+* **Characteristics:** Shrinks weights asymptotically toward zero. 
+* **Use Case:** Ideal for handling multicollinearity and ensuring model stability. It keeps all features but minimizes their individual impact.
+
+### B. Lasso Regression (L1 Regularization)
+Lasso adds a penalty equal to the absolute value of the magnitude of coefficients.
+$$J(w) = \text{MSE} + \alpha \sum_{j=1}^{m} |w_j|$$
+* **Characteristics:** Induces **Sparsity**. Due to the diamond-shaped geometry of the L1 constraint, it forces less important weights to become **exactly zero**.
+* **Use Case:** Automatic **Feature Selection**. Use this when you suspect only a small subset of features actually drives the output.
+
+---
+
+## 🏗️ Implementation Guidelines
+1.  **Scaling:** Always use `StandardScaler` before training `SGDRegressor` or `LassoRegression`. Regularization is sensitive to feature scale.
+2.  **Bias Exclusion:** We do not regularize the intercept ($w_0$). Doing so would force the model toward the origin and bias our predictions.
