@@ -31,6 +31,30 @@ $$J(w) = \text{MSE} + \alpha \sum_{j=1}^{m} |w_j|$$
 
 ---
 
+## 3. Binary Classification: Logistic Regression
+
+Despite its name, Logistic Regression is a classification algorithm used to model the probability of a discrete outcome. It serves as the foundation for neural network activation layers.
+
+### The Sigmoid Function
+To map any real-valued number $z$ into a probability range $[0, 1]$, we apply the **Logistic (Sigmoid) Function**:
+$$\sigma(z) = \frac{1}{1 + e^{-z}}$$
+
+
+
+### Decision Logic
+The model predicts a class label $\hat{y}$ based on a threshold (default $\tau = 0.5$):
+$$\hat{y} = \begin{cases} 1 & \text{if } \sigma(Xw + b) \geq 0.5 \\ 0 & \text{otherwise} \end{cases}$$
+
+### The Objective: Log-Loss (Cross-Entropy)
+Unlike Linear Regression, we do not use MSE. Instead, we minimize the **Negative Log-Likelihood**, which penalizes confident wrong predictions exponentially:
+$$J(w) = -\frac{1}{n} \sum_{i=1}^{n} [y_i \log(\hat{y}_i) + (1-y_i) \log(1-\hat{y}_i)]$$
+
+### Implementation Details
+* **Numerical Stability:** Our implementation utilizes `np.clip` on input logits to prevent overflow/underflow during the exponential calculation.
+* **Vectorized Gradient:** The gradient used for updates is derived as $\nabla_w J = \frac{1}{n} X^T (\sigma(Xw+b) - y)$.
+
+---
+
 ## 🏗️ Implementation Guidelines
 1.  **Scaling:** Always use `StandardScaler` before training `SGDRegressor` or `LassoRegression`. Regularization is sensitive to feature scale.
 2.  **Bias Exclusion:** We do not regularize the intercept ($w_0$). Doing so would force the model toward the origin and bias our predictions.
