@@ -93,6 +93,10 @@ class DecisionTreeClassifier(BaseEstimator):
             return self._traverse_tree(x, node.left)
         else:
             return self._traverse_tree(x, node.right)
+        
+    def fit(self, X, y):
+        X, y = np.asarray(X), np.asarray(y)
+        self.root = self._grow_tree(X, y)
 
     def predict(self, X):
         return np.array([self._traverse_tree(x, self.root) for x in X])
