@@ -9,6 +9,11 @@ class RandomForestClassifier:
         self.n_features = n_features
         self.trees = []
 
+    def _bootstrap_samples(self, X, y):
+        n_samples = X.shape[0]
+        idxs = np.random.choice(n_samples, n_samples, replace=True)
+        return X[idxs], y[idxs]
+
     def fit(self, X, y):
         self.trees = []
         for _ in range(self.n_trees):
@@ -16,10 +21,9 @@ class RandomForestClassifier:
                 max_depth=self.max_depth, 
                 min_samples_split=self.min_samples_split
             )
-            # 1. Create a bootstrap sample of X and y
-            # 2. Fit the tree
-            # 3. Add to self.trees
-            pass
+            X_sample, y_sample = self._bootstrap_samples(X, y)
+            tree.fit(X_sample, y_sample)
+            self.trees.append(tree)
 
     def predict(self, X):
         # 1. Get predictions from every tree
