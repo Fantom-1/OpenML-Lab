@@ -10,10 +10,11 @@ class Node:
         self.value = value
 
 class DecisionTreeClassifier(BaseEstimator):
-    def __init__(self, max_depth=10, min_samples_split=2):
+    def __init__(self, max_depth=10, min_samples_split=2,n_features=None):
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.root = None
+        self.n_features = n_features
 
     def _gini(self, y):
         m = len(y)
@@ -26,25 +27,38 @@ class DecisionTreeClassifier(BaseEstimator):
         best_feature, best_threshold = None, None
         best_gini = float("inf")
 
-        n_samples, n_features = X.shape
+        n_samples, n_total_features = X.shape
+        
+        # --- Feature Randomness (The Forest's Secret) ---
+        # If self.n_features is set (e.g., sqrt(n)), we only look at a subset
+        if self.n_features is None:
+            feat_idxs = np.arange(n_total_features)
+        else:
+            # Randomly select features without replacement
+            feat_idxs = np.random.choice(n_total_features, self.n_features, replace=False)
 
-        for feature in range(n_features):
-            thresholds = np.unique(X[:, feature])
+        for feature in feat_idxs:
+            X_column = X[:, feature]
+            thresholds = np.unique(X_column)
 
             for threshold in thresholds:
-                left_mask = X[:, feature] <= threshold
-                right_mask = X[:, feature] > threshold
+                # 1. Generate Masks for splitting
+                left_mask = X_column <= threshold
+                right_mask = X_column > threshold
 
                 y_left, y_right = y[left_mask], y[right_mask]
 
+                # 2. Skip split if one side is empty
                 if len(y_left) == 0 or len(y_right) == 0:
                     continue
 
-                gini = (
-                    len(y_left) / n_samples * self._gini(y_left) +
-                    len(y_right) / n_samples * self._gini(y_right)
-                )
+                # 3. Calculate Weighted Gini Impurity
+                # Note: We use len(y) for the current node's total samples
+                current_n = len(y)
+                gini = (len(y_left) / current_n * self._gini(y_left)) + \
+                    (len(y_right) / current_n * self._gini(y_right))
 
+                # 4. Update the "Best" candidate
                 if gini < best_gini:
                     best_gini = gini
                     best_feature = feature
